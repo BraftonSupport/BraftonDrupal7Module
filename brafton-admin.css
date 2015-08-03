@@ -1,0 +1,60 @@
+body.page-admin-config-content-brafton-settings fieldset#edit-b-cta{
+
+}
+.form-item.form-type-radio.form-item-brafton-error-logs {
+  width: 50%;
+  max-width: 50%;
+  float: left;
+    padding-right:24px;
+    box-sizing:border-box;
+}
+.form-item.form-type-radio.form-item-brafton-error-logs div.description {
+  height: 250px;
+  max-width: 100%;
+  overflow-y: auto;
+}
+input#edit-brafton-error-logs {
+  display: none;
+}
+span.fieldset-legend {
+  left: 0;
+}
+
+fieldset#edit-brafton-article, fieldset#edit-brafton-video, fieldset#edit-brafton-article {
+  width: 33%;
+  text-align: center;
+    float:left;
+    box-sizing:border-box;
+}
+fieldset#edit-brafton-article span, fieldset#edit-brafton-video span, fieldset#edit-brafton-article span{
+    display:block;
+    width:95%;
+}
+img.background_preview {
+  width: 50%;
+  height: auto;
+}
+img.background_preview.brafton_video_end_cta_background{
+    width:100%;
+}
+span.actual_description {
+  display: block;
+}
+fieldset#edit-b-cta div.fieldset-wrapper div {
+    float: left;
+    width: 200px;
+    margin-right: 10px;
+}
+div#edit-brafton-video-end-cta-background-ajax-wrapper {
+    width: 400px !important;
+}
+div#brafton_type_info_block fieldset div.fieldset-wrapper:after{
+    clear:both;
+    content:"";
+    display:block;
+    height:1px; 
+}
+div#brafton_type_info_block fieldset div{
+    float:left;
+    margin-right:25px;
+}

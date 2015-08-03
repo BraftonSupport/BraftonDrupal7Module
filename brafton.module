@@ -1,0 +1,404 @@
+<?php
+/*
+ *
+ ******************************************************************************************************
+ *
+ * Main Module script calls neeeded php scripts.  This page also contains functions needed for most page loads
+ * or for building pages.
+ *
+ ******************************************************************************************************
+ */
+
+require_once dirname(__FILE__) . '/APIClientLibrary/ApiHandler.php';
+require_once dirname(__FILE__) . '/RCClientLibrary/AdferoArticlesVideoExtensions/AdferoVideoClient.php';
+require_once dirname(__FILE__) . '/RCClientLibrary/AdferoArticles/AdferoClient.php';
+require_once dirname(__FILE__) . '/RCClientLibrary/AdferoPhotos/AdferoPhotoClient.php';
+require_once dirname(__FILE__) . '/BraftonFunctions.php';
+require_once dirname(__FILE__) . '/BraftonImporter.php';
+require_once dirname(__FILE__) . '/braftonAdmin.php';
+require_once dirname(__FILE__) . '/BraftonError.php';
+
+/*
+ **********************************************************************************************
+ *	Implementation of hook_init to include atlantis and any other scripts to the head of pages. 
+ **********************************************************************************************
+ */
+function brafton_init()	{
+    //only display the atlantis player scripts if we are not viewing an administration page
+    if(!path_is_admin(current_path())){
+          drupal_add_css('//atlantisjs.brafton.com/v1/atlantisjsv1.3.css', array('type' => 'external'));
+
+          drupal_add_js('//atlantisjs.brafton.com/v1/atlantis.min.v1.3.js', array(
+          'type' => 'external',
+          'scope' => 'header',
+          'group' => JS_THEME,
+          'every_page' => TRUE,
+          'weight' => -1,
+        ));
+    }
+}
+/*
+ **********************************************************************************************
+ * 	Rendering of the blog page.
+ **********************************************************************************************
+ */
+function brafton_blog_landing( $bundle )	{
+
+	$query = new EntityFieldQuery();
+	$query->entityCondition( 'entity_type','node' );
+	$query->entityCondition( 'bundle',$bundle );
+	$query->propertyCondition( 'status', 1 );
+	$query->propertyOrderBy( 'created', 'DESC' );
+	$query->pager();
+	$result = $query->execute();
+	$content = '';
+	if ( !empty( $result ) )	{
+		foreach ( $result['node'] as $key => $value )	{
+			$node = node_view( node_load( $key ),'teaser' );
+			$content .= drupal_render( $node );
+		}
+	}
+	return $content . theme( 'pager' );
+
+}
+/*
+ *********************************************************************************************
+ *   Rendering of the Archives Pages 
+ *********************************************************************************************
+ */
+function brafton_archives_load( $bundle,$year,$month )	{
+
+	//Formats url arguments into a unix date range
+
+	$unix_start = strtotime( $year . '-' . $month );
+	if( $month == 12 ){
+		$unix_end = strtotime( ( $year + 1 ) . '-1' );
+	}
+	else {
+		$unix_end = strtotime( $year . '-' . ( $month + 1 ) );
+	}
+	$query = new EntityFieldQuery();
+	$query->entityCondition( 'entity_type','node' );
+	$query->entityCondition( 'bundle',$bundle );
+	$query->propertyCondition( 'status', 1 );
+	$query->propertyCondition( 'created',array($unix_start,$unix_end),'BETWEEN' );
+	$query->propertyOrderBy( 'created', 'DESC' );
+	$query->pager();
+	$result = $query->execute();
+	$content = '<h1 class="title" id="page-title">' . brafton_archives_title( $year,$month ) . '</h4>';
+	if ( !empty( $result ) )	{
+		foreach ( $result['node'] as $key => $value )	{
+			$node = node_view( node_load( $key ),'teaser' );
+			$content .= drupal_render( $node );
+		}
+	}
+	return $content . theme( 'pager' );
+
+}
+
+function brafton_archives_title( $year,$month )	{
+
+	$unix_time =  mktime( 0,0,0,intval( $month ),10,intval( $year ) );
+	$archive_date = format_date( $unix_time,'custom','F Y' );
+	$title = t( 'News Archives - ' . $archive_date );
+	return $title;
+
+}
+/*
+ *********************************************************************************************
+ *   Rendering of the Healines Block
+ *********************************************************************************************
+ */
+function brafton_headlines( $bundle )	{
+
+	$query = new EntityFieldQuery();
+	$query->entityCondition( 'entity_type','node' );
+	$query->entityCondition( 'bundle',$bundle );
+	$query->propertyCondition( 'status', 1 );
+	$query->propertyOrderBy( 'created', 'DESC' );
+	$query->range(0,3);
+	$result = $query->execute();
+	$content = '<ul>';
+	if ( !empty( $result ) )	{
+		foreach ( $result['node'] as $key => $value )	{
+			$node = node_load( $key );
+			$content .= '<li>' . l( t( $node->title ),'node/' . $node->nid ) . '<br /><span class="headlines-date">' . format_date( $node->created,'custom','F j, Y' ) . '</span></li>';
+		}
+	}
+	$content .= '</ul>';
+	return $content;
+}
+/*
+ *********************************************************************************************
+ *   Rendering the Categories Block
+ *********************************************************************************************
+ */
+function brafton_categories( $bundle )	{
+
+	//Loads the Brafton Vocabulary Object
+	if ( $bundle == 'b_news' ) {
+		$brafton_vocabulary = taxonomy_vocabulary_machine_name_load( 'b_news_t' );
+	}
+	else {
+		$brafton_vocabulary = taxonomy_vocabulary_machine_name_load( 'b_news_v' );
+	}
+	$vid = $brafton_vocabulary->vid;
+
+	$query = new EntityFieldQuery();
+	$query->entityCondition( 'entity_type','taxonomy_term' );
+	$query->propertyCondition( 'vid',$vid );
+	$result = $query->execute();
+	$content = '<ul>';
+	if ( !empty( $result ) )	{
+		foreach ( $result['taxonomy_term'] as $key => $value )	{
+			$term = taxonomy_term_load( $key );
+			$content .= '<li>' . l( t( $term->name ),'taxonomy/term/' . $term->tid ) . '</li>';
+		}
+	}
+	$content .= '</ul>';
+	return $content;
+
+}
+/*
+ *********************************************************************************************
+ *   Rendering of the Archives Block 
+ *********************************************************************************************
+ */
+function brafton_archives( $bundle )	{
+
+	$query = new EntityFieldQuery();
+	$query->entityCondition( 'entity_type','node' );
+	$query->entityCondition( 'bundle',$bundle );
+	$query->propertyCondition( 'status', 1 );
+	$query->propertyOrderBy( 'created', 'DESC' );
+	$result = $query->execute();
+	$date_array = array();
+	$content = '<ul>';
+	if ( !empty( $result ) )	{
+		foreach ( $result['node'] as $key => $value )	{
+			$node = node_load( $key );
+			$year_month = format_date( $node->created,'custom','Y' ) . format_date( $node->created,'custom','m' );
+     		array_push( $date_array,$year_month );
+		}
+		$date_array = array_unique( $date_array );
+		foreach( $date_array as $value ){
+			$year = str_split( $value,4 );
+			$unix_time =  mktime( 0,0,0,$year[1],10,$year[0] );
+			$date_string = format_date( $unix_time,'custom','F Y' );
+			if( $bundle == 'b_news' )	{
+			$content .= '<li>' . l( t( $date_string ),'news/archive/' . $year[0] . '/' . $year[1] ) . '</li>';
+			}
+			else {
+			$content .= '<li>' . l( t( $date_string ),'video/archive/' . $year[0] . '/' . $year[1] ) . '</li>';
+			}
+		}
+	}
+	$content .= '</ul>';
+	return $content;
+
+}
+/*
+ *********************************************************************************************
+ *   Rendering of the Related Posts on Single Post Pages
+ *********************************************************************************************
+ */
+function brafton_related_posts( &$output,$pre_render )	{
+
+	$node = $pre_render['#node'];
+	$language = $node->language;
+	$bundle = $node->type;
+	if( $bundle == 'b_news' ){
+		$content = '<h3>Related Articles</h3><ul>';
+		@$term_array = $node->field_brafton_term[ $language ];
+		$field_condition = 'field_brafton_term';
+	}
+	else{
+		$content = '<h3>Related Video</h3><ul>';
+		@$term_array = $node->field_brafton_video_term[ $language ];
+		$field_condition = 'field_brafton_video_term';
+	}
+	@$tid = $term_array[ array_rand( $term_array ) ]['tid'];
+	$query = new EntityFieldQuery();
+	$query->entityCondition( 'entity_type','node' );
+	$query->entityCondition( 'bundle',$bundle );
+	$query->propertyCondition( 'status', 1 );
+	$query->propertyOrderBy( 'created', 'DESC' );
+	$query->range(0,3);
+	$query->fieldCondition( $field_condition,'tid',$tid );
+	$result = $query->execute();
+	if ( !empty( $result ) )	{
+		foreach ( $result['node'] as $key => $value )	{
+			$node = node_load( $key );
+			$content .= '<li>' . l( t( $node->title ),'node/' . $node->nid ) . '<br /><span class="related-posts-date">' . format_date( $node->created,'custom','F j, Y' ) . '</span></li>';
+		}
+	}
+	$content .= '</ul>';
+	return $output . $content;
+}
+
+function load_article_array( $is_archive )	{
+
+	//Checks for an archive file, and if it finds one, loads the contents of the archive file into the API.  Otherwise, loads the live feed.  All articles are parsed from the XML into an array.
+	
+	if( $is_archive )	{
+		$archive_file = file_load( variable_get( 'brafton_archive_file' ) );
+		$tmp_name = drupal_realpath( $archive_file->uri );
+		$article_array = NewsItem::getNewsList( $tmp_name,'html' );
+		variable_del( 'brafton_archive_file' );
+	}
+	else	{
+		$api_root = variable_get( 'brafton_api_root' );
+		$api_key = variable_get( 'brafton_api_key' );
+		$summon_api = new ApiHandler( $api_key,$api_root );
+		$article_array = $summon_api->getNewsHTML();
+	}
+	return $article_array;
+
+}
+
+/**
+*	Implementation of hook_cron, which runs the importer and saves the articles into the Drupal database as node type b_news.
+*/
+
+function brafton_cron()	{
+    $feed_type = variable_get( 'brafton_feed_type' );
+    if($feed_type == 'articles' || $feed_type == 'both'){
+        BraftonArticleImporter();
+    }
+    if($feed_type == 'videos' || $feed_type == 'both'){
+        BraftonVideoImporter();
+    }
+}
+
+function brafton_add_URLs($sitemaps){
+//function to build video sitemap according to google specifications
+//accepts array of arrays.
+//second array keys:url, (url of page video is on)
+//title,
+//thumbnail, (img location for thumbnail)
+//description, (video description)
+//content_loc (actual location of video file)
+//
+//more can be added relatively easily
+//
+	$funkdoc = new DOMDocument();
+	//like funcdoc, but redman
+	if(!file_exists('video-sitemap.xml')){
+		$newurlset = $funkdoc ->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9','urlset','');
+		$funkdoc -> appendChild($newurlset);
+		$newurlset->setAttributeNS('http://www.w3.org/2000/xmlns/' ,'xmlns:video', 'http://www.google.com/schemas/sitemap-video/1.1');
+		$funkdoc->save("video-sitemap.xml");
+	} else $funkdoc->load('video-sitemap.xml');			
+		
+		if($funkdoc){
+			//get previous titles to prevent sitemap entry duplication
+			$titles=array();
+			$videos = $funkdoc->getElementsByTagName('url');
+			foreach ($videos as $video) {
+				foreach($video->childNodes as $child){
+					 if($child->nodeName=="video:video"){
+						foreach($child->childNodes as $children){
+							if($children->nodeName=="video:title"){
+								$titles[]=$children->nodeValue;
+							}
+						}
+					}
+				}
+			}
+			
+			$urlset = $funkdoc->getElementsByTagName('urlset');
+			foreach ($urlset as $urltag) {
+			//should only be one
+				foreach($sitemaps as $video){
+				//do all sitemap additions at once for only one file write.
+					
+					//dupe check
+					$dupe=false;
+					foreach($titles as $video_title){
+						if($video_title==$video['title'])
+						$dupe=true;
+					}
+					if($dupe) continue;
+					
+					//url
+					$newurl = $funkdoc ->createElement('url');
+					//$txtNode = $funkdoc ->createTextNode ("test");
+					//$newurl -> appendChild($txtNode);
+					$linebreak = $funkdoc ->createTextNode ("\n");
+					$newurl -> appendChild($linebreak);
+					
+					//loc tag
+					$newloc = $funkdoc ->createElement('loc');
+					$txtNode = $funkdoc ->createTextNode ($video['url']);
+					$newloc -> appendChild($txtNode);
+					$newurl -> appendChild($newloc);
+					
+					$linebreak = $funkdoc ->createTextNode ("\n");
+					$newurl -> appendChild($linebreak);
+					
+					//video tag
+					$newvideo = $funkdoc ->createElement('video:video');
+					$newurl -> appendChild($newvideo);
+					
+					//title tag
+					$newtitle = $funkdoc ->createElement('video:title');
+					$txtNode = $funkdoc ->createTextNode ($video['title']);
+					$newtitle -> appendChild($txtNode);
+					$newvideo -> appendChild($newtitle);
+					
+					$linebreak = $funkdoc ->createTextNode ("\n");
+					$newvideo -> appendChild($linebreak);
+					
+					//thumbnail tag
+					$newthumb = $funkdoc ->createElement('video:thumbnail_loc');
+					$txtNode = $funkdoc ->createTextNode ($video['thumbnail']);
+					$newthumb -> appendChild($txtNode);
+					$newvideo -> appendChild($newthumb);
+					
+					$linebreak = $funkdoc ->createTextNode ("\n");
+					$newvideo -> appendChild($linebreak);
+					
+					
+					//description tag
+					$newdesc = $funkdoc ->createElement('video:description');
+					$txtNode = $funkdoc ->createTextNode ($video['description']);
+					$newdesc -> appendChild($txtNode);
+					$newvideo -> appendChild($newdesc);
+					
+					$linebreak = $funkdoc ->createTextNode ("\n");
+					$newvideo -> appendChild($linebreak);
+					
+
+					//content location tag
+					$newcontentloc = $funkdoc ->createElement('video:content_loc');
+					$txtNode = $funkdoc ->createTextNode ($video['location']);
+					$newcontentloc -> appendChild($txtNode);
+					$newvideo -> appendChild($newcontentloc);
+					
+					$linebreak = $funkdoc ->createTextNode ("\n");
+					$newvideo -> appendChild($linebreak);
+					
+					//publication date tag
+					$newpubdate = $funkdoc ->createElement('video:publication_date');
+					$txtNode = $funkdoc ->createTextNode ($video['publication']);
+					$newpubdate -> appendChild($txtNode);
+					$newvideo -> appendChild($newpubdate);
+
+					$linebreak = $funkdoc ->createTextNode ("\n");
+					$newvideo -> appendChild($linebreak);
+					
+					$linebreak = $funkdoc ->createTextNode ("\n");
+					$newurl -> appendChild($linebreak);
+					
+					$linebreak = $funkdoc ->createTextNode ("\n");
+					$urltag -> appendChild($newurl);
+					
+					$linebreak = $funkdoc ->createTextNode ("\n");
+					$urltag -> appendChild($linebreak);
+			}	
+				$test = $funkdoc->save("video-sitemap.xml");
+		}
+	}
+}
+
+?>
