@@ -31,7 +31,7 @@ class BraftonErrorReport {
     
     private $domain;
     //Construct our error reporting functions
-    public function __construct($api = 'testapi', $brand = 'testbrand', $debug = true){
+    public function __construct($api, $brand , $debug = true){
 
         $this->debug = $debug;
         $this->url = $_SERVER['REQUEST_URI'];
@@ -93,8 +93,8 @@ class BraftonErrorReport {
         }
         //assigns values for missing arguments on custom exceptions from the api libarary
         $errorLevel = method_exists($e,'getseverity')? $e->getseverity(): 2;
-        //if errorLevel == 1 (script stop running error) and the error was not part of one of the below know issues for those pages runs error reporting. 
-        if ( ($errorLevel == 1) || ($this->debug)  ){
+        //if errorLevel == 1 (script stop running error) and the error was not part of one of the below know issues for those pages runs error reporting.
+        if ( ($errorLevel == 1) || ($this->debug) ){
 
 
             $brafton_error = $this->b_e_log();
