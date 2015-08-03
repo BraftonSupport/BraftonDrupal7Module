@@ -124,7 +124,6 @@ function BraftonArticleImporter(){
 				taxonomy_node_insert( $node );
 				$nid=$node->nid;
 				$alias = drupal_get_path_alias("node/" . $nid);
-                $errors->level++;
                 $counter++;
                 ++$errors->level;
 			}
@@ -135,15 +134,13 @@ function BraftonArticleImporter(){
 function BraftonVideoImporter(){
     
     if(!isset($errors)){
-        $errors = new BraftonErrorReport();
+        $errors = new BraftonErrorReport(variable_get('brafton_api_key'), variable_get( 'brafton_api_root' ) );
     }
 	//Gathers feed type, Api and Video Keys, and archive file information from the Brafton module settings page.
     $import_list = array();
 	$feed_type = variable_get( 'brafton_feed_type' );
-	$is_api = variable_get( 'brafton_api_key' );
 	$is_video_public = variable_get( 'brafton_video_public_key' );
 	$is_video_secret = variable_get( 'brafton_video_secret_key' );
-	$is_archive = variable_get( 'brafton_archive_file' );
 	$overwrite = variable_get( 'brafton_overwrite' );
 	$is_published = variable_get( 'brafton_published' );
     

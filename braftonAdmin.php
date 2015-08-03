@@ -153,11 +153,13 @@ function brafton_admin_form($form, &$form_state)	{
      * General Options
      *************************************************************************************
      */
+    Global $base_url;
     $form['brafton_general_options'] = array(
         '#type' => 'fieldset',
         '#title'    => 'General Options',
         '#collapsible'  => true,
-        '#collapsed'    => true
+        '#collapsed'    => true,
+        '#description'  => 'If you need help setting up your importer view our pdf Instructions <a href="'.$base_url.'/'. drupal_get_path('module', $name).'/README.MD" target="_blank">Here</a>'
     );
 	$form['brafton_general_options']['brafton_feed_type'] = array(
 		'#type' => 'select',
