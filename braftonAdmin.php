@@ -3,18 +3,7 @@
 /**
 *	Creation of the admin form.
 */
-function brafton_admin_form2(){
-    echo '<h1>hello</h1>';
-}
-function get_it(){
-    $val = variable_get('brafton_temp_image');
-    $val = unserialize($val);
-    $string = '';
-    foreach($val as $key => $value){
-        $string .= $key .' with' .$value;
-    }
-    return $string;
-}
+
 //this function will get the erros and turn them into a readable string
 function get_errs(){
     $ser = variable_get('brafton_e_log');
@@ -101,7 +90,7 @@ function spit_image($image){
 function build_type_list($list){
     $array = array();
     foreach($list as $key){
-        if($key['type'] == 'b_video'){ continue; }
+        if($key['type'] == 'b_video' || $key['type'] == 'page' ){ continue; }
         $array[$key['type']] = $key['name'];
     }
     return $array;
@@ -119,8 +108,18 @@ function ajax_brafton_test($form, &$form_state){
     return $form['brafton_article_options']['brafton_type_info'];
 }
 function brafton_admin_form($form, &$form_state)	{
+    //Check if the importer should have run and it didn't
+    $cron_time = variable_get('cron_safe_threshold');
+    $cron_last = variable_get('cron_last');
+    $current_time = time();
+    $diff = $current_time - $cron_last;
+    //if more time has passed than should have
+    if($diff > $cron_time){
+        drupal_set_message(t('It appears that your importer may have failed to run when is was scheduled.  A report has been sent to your CMS to ensure Delivery of content'), 'warning');
+       // $errors = new BraftonErrorReport(variable_get('brafton_api_key'), variable_get( 'brafton_api_root' ) );
+    }
     if(isset($_GET['b_error']) && $_GET['b_error'] == 'vital'){
-        drupal_set_message(t('There was a fatal error when running the importer.  Please contact Tech support'));
+        drupal_set_message(t('There was a fatal error when running the importer.  Please contact Tech support'), 'error');
     }
     $name = basename('brafton.module', '.module');
     /* This would be section to add new css rules for our admin page */
@@ -273,10 +272,10 @@ function brafton_admin_form($form, &$form_state)	{
 	);
     $form['brafton_article_options']['brafton_existing_type'] = array(
         '#type' => 'select',
-        '#title'    => 'Use Existing Type',
+        '#title'    => 'Content Type',
         '#options'  => build_type_list($type_list), 
         '#default_value'    => variable_get('brafton_existing_type', 'b_news'),
-        '#description'  => 'Import Articles under an existing content type<span class="disclaimer">ADVANCED OPTION.  Only change if you know what you are doing</span>',
+        '#description'  => 'Import Articles under the content type of your choice.<span class="disclaimer">ADVANCED OPTION.  Only change if you know what you are doing. Defaults to our News Article Content Type</span>',
         '#ajax' => array(
             'callback'  => 'ajax_brafton_test',
             'wrapper'   => 'brafton_type_info_block',
@@ -291,7 +290,7 @@ function brafton_admin_form($form, &$form_state)	{
         '#type' => 'fieldset'
     );
     //displays the form with values for existing post type on initial page load
-    if(empty($form_state['values']['brafton_existing_type']) && variable_get('brafton_existing_type') != 'b_news'){
+    if(empty($form_state['values']['brafton_existing_type']) && variable_get('brafton_existing_type', 'b_news') != 'b_news'){
     $form['brafton_article_options']['brafton_type_info']['brafton_custom_body'] = array(
             '#type' => 'select',
             '#prefix'   => '<p>Map your content fields to the appropriate content parts.<span class="disclaimer">Caution the following are advanced options and should only be used if you know what your are doing</span></p>',
