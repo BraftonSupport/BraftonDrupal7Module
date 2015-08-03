@@ -101,13 +101,14 @@ function spit_image($image){
 function build_type_list($list){
     $array = array();
     foreach($list as $key){
+        if($key['type'] == 'b_video'){ continue; }
         $array[$key['type']] = $key['name'];
     }
     return $array;
 }
 function build_type_field_list($type){
-    $names = field_info_instances('node',$type);
     
+    $names = field_info_instances('node',$type);
     $test = array();
     foreach($names as $key){
         $test[$key['field_name']] = $key['field_name'];
@@ -234,6 +235,7 @@ function brafton_admin_form($form, &$form_state)	{
 		'#default_value' => variable_get( 'brafton_api_key' ),
 		'#size' => 36,
 		'#maxlength' => 36,
+        '#prefix'   => 'Options in this section apply to Articles ONLY.  Videos have seperate options'
 	);
     $form['brafton_article_options']['brafton_blog_page'] = array(
 		'#type' => 'checkbox',
@@ -272,6 +274,7 @@ function brafton_admin_form($form, &$form_state)	{
         '#title'    => 'Use Existing Type',
         '#options'  => build_type_list($type_list), 
         '#default_value'    => variable_get('brafton_existing_type', 'b_news'),
+        '#description'  => 'Import Articles under an existing content type<span class="disclaimer">ADVANCED OPTION.  Only change if you know what you are doing</span>',
         '#ajax' => array(
             'callback'  => 'ajax_brafton_test',
             'wrapper'   => 'brafton_type_info_block',
@@ -289,7 +292,7 @@ function brafton_admin_form($form, &$form_state)	{
     if(empty($form_state['values']['brafton_existing_type']) && variable_get('brafton_existing_type') != 'b_news'){
     $form['brafton_article_options']['brafton_type_info']['brafton_custom_body'] = array(
             '#type' => 'select',
-            '#prefix'   => '<p>Caution the following are advanced options and should only be used if you know what your are doing</p>',
+            '#prefix'   => '<p>Map your content fields to the appropriate content parts.<span class="disclaimer">Caution the following are advanced options and should only be used if you know what your are doing</span></p>',
             '#title'    => 'Content of the Article',
             '#options'  => build_type_field_list(variable_get('brafton_existing_type')),
             '#default_value'    => variable_get('brafton_custom_body', '')
@@ -300,20 +303,33 @@ function brafton_admin_form($form, &$form_state)	{
             '#options'  => build_type_field_list(variable_get('brafton_existing_type')),
             '#default_value'    => variable_get('brafton_custom_image', '')
         );
+        $form['brafton_article_options']['brafton_type_info']['brafton_custom_taxonomy'] = array(
+            '#type' => 'select',
+            '#title'    => 'Taxonomy for Article',
+            '#options'  => build_type_field_list(variable_get('brafton_existing_type')),
+            '#default_value'    => variable_get('brafton_custom_taxonomy', '')
+        );
     }
     //used for displaying the ajax load of content type to display the fields available for mapping
     if( (!empty($form_state['values']['brafton_existing_type']) && $form_state['values']['brafton_existing_type'] != 'b_news')){
+        $current = $form_state['values']['brafton_existing_type'];
          $form['brafton_article_options']['brafton_type_info']['brafton_custom_body'] = array(
             '#type' => 'select',
-            '#prefix'   => '<p>Caution the following are advanced options and should only be used if you know what your are doing</p>',
+            '#prefix'   => '<p>Map your content fields to the appropriate content parts.<span class="disclaimer">Caution the following are advanced options and should only be used if you know what your are doing</span></p>',
             '#title'    => 'Content of the Article',
-            '#options'  => build_type_field_list(variable_get('brafton_existing_type')),
+            '#options'  => build_type_field_list($current),
             '#default_value'    => ''
         );
         $form['brafton_article_options']['brafton_type_info']['brafton_custom_image'] = array(
             '#type' => 'select',
             '#title'    => 'Image for Article',
-            '#options'  => build_type_field_list(variable_get('brafton_existing_type')),
+            '#options'  => build_type_field_list($current),
+            '#default_value'    => ''
+        );
+        $form['brafton_article_options']['brafton_type_info']['brafton_custom_taxonomy'] = array(
+            '#type' => 'select',
+            '#title'    => 'Taxonomy for Article',
+            '#options'  => build_type_field_list($current),
             '#default_value'    => ''
         );
     }

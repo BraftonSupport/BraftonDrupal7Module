@@ -58,3 +58,8 @@ div#brafton_type_info_block fieldset div{
     float:left;
     margin-right:25px;
 }
+span.disclaimer {
+    display: block;
+    font-size: .75em;
+    color: red;
+}

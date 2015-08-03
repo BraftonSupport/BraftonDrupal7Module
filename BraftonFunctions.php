@@ -290,25 +290,37 @@ function get_category( $categories, $i ){
  ***************************************
  */
 function set_article_categories( $articleobj,$bundle,$categoryObj = NULL )	{
-
+    $type = variable_get('brafton_existing_type');
 	//Grabs the categories from the feed.
+    if($categoryObj != NULL){
+        $categories = array( $categoryObj );
+        $video_loader = true;
+        $type = 'b_video';
+    }else{
+        $categories = $articleobj->getCategories();
+        $video_loader = false;
+    }
 
-	if( $bundle == 'b_video' )	{
-		$categories = array( $categoryObj );
-		$vocab = 'b_news_v';
-	}
-	else {
-		$categories = $articleobj->getCategories();
-		$vocab = 'b_news_t';
-	}
+    switch($type){
+        case 'b_news':
+        $vocab = 'b_news_t';
+        break;
+        case 'b_video':
+        $vocab = 'b_news_v';
+        break;
+        default:
+        $info = field_info_field(variable_get('brafton_custom_taxonomy'));
+        $vocab = $info['settings']['allowed_values'][0]['vocabulary'];
+        break;
+    }
 
 	//Checks to see if the terms already exist in the Brafton Taxonomy Vocabulary.  If they do not, new terms are created.
 	$i = 0; 
 	$brafton_vocabulary = taxonomy_vocabulary_machine_name_load( $vocab );
 	$vid = $brafton_vocabulary->vid;
 	$cat_array = array();
-	foreach($categories as $category)	{
-		if( $bundle == 'b_video' )	{
+	foreach($categories as $category){
+		if( $video_loader )	{
 			$name = $categories[0]->name;
 		}
 		else {
@@ -318,7 +330,7 @@ function set_article_categories( $articleobj,$bundle,$categoryObj = NULL )	{
 		$check_cat = taxonomy_get_term_by_name( $name );
 		$found = 0;
 		foreach( $check_cat as $term )	{
-			if( $term->vid == $vid )	{
+			if( $term->vid == $vid ){
 				$tid = $term->tid;
 				$found = 1;
 			}

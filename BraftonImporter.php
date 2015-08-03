@@ -45,7 +45,7 @@ function BraftonArticleImporter(){
 				$image = get_image_attributes( $value );
 		
 				//Gets the article categories as an array of valid and unique term ids.
-		
+		          
 				$categories = set_article_categories( $value,'b_news' );
 		
 				//Instantiation of each article component as a field in the node object.
@@ -53,11 +53,13 @@ function BraftonArticleImporter(){
                 
                 $types = array(
                     'body'  => 'body',
-                    'image' => 'field_brafton_image'
+                    'image' => 'field_brafton_image',
+                    'tax'   => 'field_brafton_term'
                 );
                 if(variable_get('brafton_existing_type') != 'b_news'){
                     $types['body'] = variable_get('brafton_custom_body');
                     $types['image'] = variable_get('brafton_custom_image');
+                    $types['tax']   = variable_get('brafton_custom_taxonomy');
                 }
 				$node->type = variable_get('brafton_existing_type');
 				$node->language = LANGUAGE_NONE;
@@ -100,8 +102,8 @@ function BraftonArticleImporter(){
 				
 				$cats=false;
 				$oldcats;
-				if($overwrite && isset($node->field_brafton_term[$node->language])){
-					$oldcats = $node->field_brafton_term[$node->language];
+                if($overwrite && isset($node->{$types['tax']}[$node->language])){
+					$oldcats = $node->{$types['tax']}[$node->language];
 					$cats=true;
 				}
 				
@@ -109,10 +111,10 @@ function BraftonArticleImporter(){
 					if($cats){
 						foreach( $oldcats as $oldcat )	{
 							if($oldcat['tid']!=$category){
-								$node->field_brafton_term[ $node->language ][]['tid'] = $category;
+								$node->{$types['tax']}[ $node->language ][]['tid'] = $category;
 							}
 						}
-					} else $node->field_brafton_term[ $node->language ][]['tid'] = $category;
+					} else $node->{$types['tax']}[ $node->language ][]['tid'] = $category;
 				}
 				
 				//end category code
