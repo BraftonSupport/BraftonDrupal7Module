@@ -233,18 +233,44 @@ function BraftonVideoImporter(){
 	            $script .=  'videos: [{';
 	            $script .='id: "video-' . $id . '"';
 	            if($cta_option){
+                    $marpro = '';
+                    $pause_asset_id = variable_get('brafton_video_pause_cta_asset_gateway_id');
+                    if($pause_asset_id != ''){
+                        $marpro = "assetGateway: { id: '$pause_asset_id' },";
+                    }
+                    $endingBackground = '';
+                    $end_background_image = variable_get('brafton_video_end_cta_background_url');
+                    if($end_background_image != ''){
+                        $end_background_image = file_create_url($end_background_image);
+                        $endingBackground = "background: '$end_background_image',";
+                    }
+                    $end_asset_id = variable_get('brafton_video_end_cta_asset_gateway_id');
+                    if($end_asset_id != ''){
+                        $endingBackground .= "assetGateway: { id: '$end_asset_id' },";
+                    }
+                    $buttonImage = '';
+                    $button_image_url = variable_get('brafton_video_end_cta_button_image_url');
+                    if($button_image_url != ''){
+                        $button_image_url = file_create_url($button_image_url);
+                        $buttonImage = "image: '$button_image_url',";
+                    }
+                    
 	            $script .=',';
 	            $script	.= <<<EOT
 					        pauseCallToAction: {
-					            text: "<a href='$pause_cta_link'>$pause_cta_text</a>"
+                                $marpro
+                                link: "$pause_cta_link",
+					            text: "$pause_cta_text"
 					        },
 					        endOfVideoOptions: {
+                                $endingBackground
 					            callToAction: {
 					                title: "$end_cta_title",
 					                subtitle: "$end_cta_subtitle",
 					                button: {
 					                    link: "$end_cta_link",
-					                    text: "$end_cta_text"
+					                    text: "$end_cta_text",
+                                        $buttonImage
 					                }
 					            }
 					        }

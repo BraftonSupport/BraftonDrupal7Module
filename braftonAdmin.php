@@ -402,6 +402,11 @@ function brafton_admin_form($form, &$form_state)	{
         '#collapsible'  => true,
         '#collapsed'    => true
     );
+    $form['b_cta']['brafton_video_ctas'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Use Video CTA\'s'),
+        '#default_value'    => variable_get('brafton_video_ctas')
+    );
 	$form['b_cta']['brafton_video_pause_cta_text'] = array(
 		'#type' => 'textfield',
 		'#title' => t( 'Atlantis Pause CTA Text' ),

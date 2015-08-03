@@ -63,3 +63,7 @@ span.disclaimer {
     font-size: .75em;
     color: red;
 }
+.form-item.form-type-checkbox.form-item-brafton-video-ctas {
+    display: block;
+    width: 100% !important;
+}
