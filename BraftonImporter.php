@@ -135,6 +135,8 @@ function BraftonVideoImporter(){
     
     if(!isset($errors)){
         $errors = new BraftonErrorReport(variable_get('brafton_api_key'), variable_get( 'brafton_api_root' ) );
+    }else{
+        $errors->level = 1;   
     }
 	//Gathers feed type, Api and Video Keys, and archive file information from the Brafton module settings page.
     $import_list = array();
@@ -210,9 +212,6 @@ function BraftonVideoImporter(){
 
 				$videoList=$videoOutClient->ListForArticle($id,0,10);
 				$list=$videoList->items;
-				//$ogg=false;
-				//$mp4=false;
-				//$flv=false;
 				$embedCode = sprintf( "<video id='video-%s' class=\"ajs-default-skin atlantis-js\" controls preload=\"auto\" width='512' height='288' poster='%s' >", $id, $presplash );
 
 				foreach($list as $listItem){
@@ -277,11 +276,6 @@ EOT;
 	            $script .= '});';
 	            $script .=  '</script>';
 				$embedCode .= $script;  
-				
-				//$embedCode = $videoClient->VideoPlayers()->GetWithFallback( $id,'redbean',1,'rcflashplayer',1 );
-				//if ( strpos( $embedCode->embedCode,'adobe' ) < 30 )	{
-				//	continue;
-				//}
 
 				//Wraps a Div around the embed code
 
@@ -343,6 +337,7 @@ EOT;
 				);
 				
 				$sitemap[]=$sitemapaddition;
+                ++$errors->level;
 			}
 
 		}
