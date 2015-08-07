@@ -92,10 +92,9 @@ class BraftonErrorReport {
             return;
         }
         //assigns values for missing arguments on custom exceptions from the api libarary
-        $errorLevel = method_exists($e,'getseverity')? $e->getseverity(): 2;
+        $errorLevel = method_exists($e,'getseverity')? $e->getseverity(): 1;
         //if errorLevel == 1 (script stop running error) and the error was not part of one of the below know issues for those pages runs error reporting.
         if ( ($errorLevel == 1) || ($this->debug) ){
-
 
             $brafton_error = $this->b_e_log();
             $errorlog = array(
