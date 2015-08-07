@@ -473,9 +473,21 @@ function brafton_admin_form($form, &$form_state)	{
     $form['b_cta']['brafton_video_end_cta_button_image'] = array(
         '#type' => 'managed_file',
 		'#title' => t( 'Ending CTA Button Image' ),
-		'#description' => '<span class="actual_description">This is Optional</span>'.spit_image('brafton_video_end_cta_button_image'),
+		'#description' => '<span class="actual_description">This is Optional and wil override the end cta text </span>'.spit_image('brafton_video_end_cta_button_image'),
         '#upload_location'  => 'public://',
         '#default_value'    => variable_get('brafton_video_end_cta_button_image'),
+    );
+    $form['b_cta']['brafton_video_end_cta_button_placement'] = array(
+        '#type' => 'select',
+        '#title' => t(' Ending button image Placement'),
+        '#description'  => t('Choose the position of button image.  You can further affect the position via css rules'),
+        '#options'  => array(
+            'tl'    => 'Top Left',
+            'tr'    => 'Top Right',
+            'bl'    => 'Bottom Left',
+            'br'    => 'Bottom Right'
+            ),
+        '#default_value'    => variable_get('brafton_video_end_cta_button_placement')
     );
     $form['b_cta']['brafton_video_end_cta_background'] = array(
         '#type' => 'managed_file',
@@ -487,6 +499,7 @@ function brafton_admin_form($form, &$form_state)	{
     $form['b_error'] = array(
         '#type' => 'fieldset',
         '#title'    => 'Brafton Error Reporting',
+        '#description'  => 'Errors resulting in failed attempts to import content will turn on Debug mode and capture all errors for debugging.  These errors are reporting to your CMS so we can better resolve any issues in a timely manner.',
         '#collapsible'  => true,
         '#collapsed'    => true
         );
@@ -497,6 +510,12 @@ function brafton_admin_form($form, &$form_state)	{
         '#format'   => 'full_html',
         '#default_value'    => variable_get('brafton_error_logs',0),
         '#prefix'   => '<h3>Error Report</h3>'
+    );
+    $form['b_error']['brafton_debug_mode'] = array(
+        '#type' => 'checkbox',
+        '#title'    => 'Debug Mode',
+        '#description'  => 'Turns on debug mode to report all errors that occur during the importer operatin',
+        '#default_value'    => variable_get('brafton_debug_mode', 0)
     );
     $form['b_error']['brafton_clear_report'] = array(
         '#type' => 'checkbox',
