@@ -1,9 +1,7 @@
 <?php
-
 /**
 *	Creation of the admin form.
 */
-
 //this function will get the erros and turn them into a readable string
 function get_errs(){
     $ser = variable_get('brafton_e_log');
@@ -218,6 +216,11 @@ function brafton_admin_form($form, &$form_state)	{
 		'#title' => t( 'Overwrite any changes made to existing content.' ),
 		'#default_value' => variable_get( 'brafton_overwrite',0 ),
 	);
+    $form['brafton_general_options']['brafton_published'] = array(
+		'#type' => 'checkbox',
+		'#title' => t( 'Import Content as unpublished.' ),
+		'#default_value' => variable_get( 'brafton_published',0 ),
+	);
     /*
      *************************************************************************************
      * Article Options
@@ -263,12 +266,6 @@ function brafton_admin_form($form, &$form_state)	{
 		'#type' => 'checkbox',
 		'#title' => t( 'Add related articles to Brafton posts.' ),
 		'#default_value' => variable_get( 'brafton_related_articles',0 ),
-	);
-    $form['brafton_article_options']['brafton_published'] = array(
-		'#type' => 'checkbox',
-		'#title' => t( 'Import articles as unpublished.' ),
-		'#default_value' => variable_get( 'brafton_published',0 ),
-	
 	);
     $form['brafton_article_options']['brafton_existing_type'] = array(
         '#type' => 'select',
@@ -482,6 +479,7 @@ function brafton_admin_form($form, &$form_state)	{
         '#title' => t(' Ending button image Placement'),
         '#description'  => t('Choose the position of button image.  You can further affect the position via css rules'),
         '#options'  => array(
+            0   => 'Choose Position',
             'tl'    => 'Top Left',
             'tr'    => 'Top Right',
             'bl'    => 'Bottom Left',

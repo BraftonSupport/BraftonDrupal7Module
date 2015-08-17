@@ -250,6 +250,23 @@ function BraftonVideoImporter(){
                         $button_image_url = file_create_url($button_image_url);
                         $buttonImage = "image: '$button_image_url',";
                     }
+                    $button_image_postition = variable_get('brafton_video_end_cta_button_placement');
+                    if($button_image_postition){
+                        switch($button_image_postition){
+                            case 'tl':
+                            $postion = '{pos: "top", val: "15px"},{pos: "left", val: "15px"}';
+                            break;
+                            case 'tr':
+                            $postion = '{pos: "top", val: "15px"},{pos: "right", val: "15px"}';
+                            break;
+                            case 'br':
+                            $postion = '{pos: "bottom", val: "15px"},{pos: "right", val: "15px"}';
+                            break;
+                            case 'bl':
+                            $postion = '{pos: "bottom", val: "15px"},{pos: "lelft", val: "15px"}';
+                        }
+                        $buttonImage .= "position: [ " . $postion . " ]";
+                    }
                     
 	            $script .=',';
 	            $script	.= <<<EOT
