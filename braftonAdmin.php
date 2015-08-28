@@ -106,6 +106,8 @@ function ajax_brafton_test($form, &$form_state){
     return $form['brafton_article_options']['brafton_type_info'];
 }
 function brafton_admin_form($form, &$form_state)	{
+     $module_list = system_list('module_enabled');
+    //debug($module_list);
     //Check if the importer should have run and it didn't
     $cron_time = variable_get('cron_safe_threshold');
     $cron_last = variable_get('cron_last');

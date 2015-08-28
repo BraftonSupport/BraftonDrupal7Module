@@ -17,6 +17,8 @@ require_once dirname(__FILE__) . '/BraftonFunctions.php';
 require_once dirname(__FILE__) . '/BraftonImporter.php';
 require_once dirname(__FILE__) . '/braftonAdmin.php';
 require_once dirname(__FILE__) . '/BraftonError.php';
+require_once dirname(__FILE__) . '/BraftonUpdater.php';
+
 
 /*
  **********************************************************************************************

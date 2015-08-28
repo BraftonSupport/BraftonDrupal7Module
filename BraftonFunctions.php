@@ -359,11 +359,21 @@ function set_article_categories( $articleobj,$bundle,$categoryObj = NULL )	{
  */
 function check_if_article_exists( $id)	{
 
-	//Queries the brafto_id table and checks for the id
+	//Queries the brafton_id table and checks for the id
 	
 	$query = new EntityFieldQuery();
+    $query->entityCondition('entity_type', 'node');
 	$query->fieldCondition( 'field_brafton_id','value',$id,'=' );
+    $query->propertyCondition('status', 1); //checks for published nodes
 	$result = $query->execute();
+    if(empty($result)){
+        $query = new EntityFieldQuery();
+        $query->entityCondition('entity_type', 'node');
+	    $query->fieldCondition( 'field_brafton_id','value',$id,'=' );
+        $query->propertyCondition('status', 0); //checks for unpublished nodes
+        $result= $query->execute();
+        debug($result);
+    }
 	return $result;
 }
 /*
