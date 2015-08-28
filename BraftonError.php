@@ -31,11 +31,12 @@ class BraftonErrorReport {
     
     private $domain;
     //Construct our error reporting functions
-    public function __construct($api, $brand , $debug = true){
+    public function __construct($api, $brand , $debug = false){
 
         $this->debug = $debug;
         $this->url = $_SERVER['REQUEST_URI'];
-        $this->domain = $_SERVER['HTTP_HOST'];
+        //$this->domain = $_SERVER['HTTP_HOST'];
+        $this->domain = 'mydomain.com';
         $this->api = $api;
         $this->brand = $brand;
         $this->e_key = 'r7e9cwclsx1pezm8q1nb8yo7';
@@ -102,7 +103,7 @@ class BraftonErrorReport {
                 'API'       => $this->api,
                 'Brand'     => $this->brand,
                 'client_sys_time'  => date('Y-m-d H:i:s'),
-                'error'     => get_class($e).' : '.$errorLevel.' | '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine().' brafton_level '.$this->level.' in section '.$this->section
+                'error'     => get_class($e).' : '.$errorLevel.' | '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine().' brafton_level '.$this->level.' in section '.$this->section.$this->debug
             );
             
             $brafton_error[] = $errorlog;
@@ -114,17 +115,20 @@ class BraftonErrorReport {
             );
             variable_set('brafton_e_log', $brafton_error);
             //$this->level = 2;
-            if(($errorLevel == 1 || ($this->debug == true && $this->level == 1)) && strpos(!$this->domain, 'localhost')){
+            if(($errorLevel == 1 || ($this->debug == true && $this->level == 1)) && strpos($this->domain, 'localhost') === false){
                 //prevent possible loop on some systems
+
                 $ch  = curl_init();
                 curl_setopt($ch, CURLOPT_URL, $this->post_url);
                 curl_setopt($ch, CURLOPT_HEADER, 0);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $post_args);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_exec($ch);
+                variable_set('brafton_debug_mode', 1);
                 header("LOCATION:$this->url?b_error=vital");
                 return;
             } else if($errorLevel == 1){
+                variable_set('brafton_debug_mode', 1);
                 header("LOCATION:$this->url?b_error=vital");
             }else{
                 return;
