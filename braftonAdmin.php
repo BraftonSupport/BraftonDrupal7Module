@@ -230,7 +230,7 @@ function brafton_admin_form($form, &$form_state)	{
      */
     $form['brafton_article_options'] = array(
         '#type' => 'fieldset',
-        '#title'    => 'Article Options Options',
+        '#title'    => 'Article Options',
         '#collapsible'  => true,
         '#collapsed'    => true
     );
@@ -340,7 +340,7 @@ function brafton_admin_form($form, &$form_state)	{
      */
     $form['brafton_video_options'] = array(
         '#type' => 'fieldset',
-        '#title'    => 'Video Options Options',
+        '#title'    => 'Video Options',
         '#collapsible'  => true,
         '#collapsed'    => true
     );
