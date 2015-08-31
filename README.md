@@ -1,6 +1,27 @@
 # BraftonDrupal7Module
 Drupal 7 Module for Importing content from out XML feed.
 
+##First Steps##
+
+1. Install the Module: 
+    1. Go to Modules in your Drupal 7 Backend.
+    2. Click _"Install new Module"_
+    3. Click _"Choose File"_ and browse your computer for the zip file you downloaded containing the importer.
+    4. Click _"Install"_ 
+    5. Return to the Modules page.
+    6. Find _"Brafton Content Integrator"_ section and check the box next to _"All in One Brafton Content Integrator"_
+    7. Scroll down to the bottom of the page and click _"Save Configuration"_
+2. Quick Configuration:
+    1. General Options:
+        - Type of Content : Select Articles.
+        - API Root : Select the Brand you are working with
+        - Content Author : Select your name
+    2. Article Options:
+        - API Key : Enter the API key provided to your by your Account manager
+        - _(optional)_ Check off **_Create a News Page at "mydomain.com/news"_**
+    3. Click _"Save Configuration"_ at the bottom of the page
+    4. Run your sites Cron or Click _"Run Article Importer"_ under **_"Manual Control & Archive Uploads"_** to import your first articles.
+    
 ##General Options
 
 **Choose Content Types**
