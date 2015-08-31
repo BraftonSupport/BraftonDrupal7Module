@@ -6,4 +6,4 @@ package = Brafton Content Integrator
 files[] = brafton.module
 configure = admin/config/content/brafton-settings
 project = Brafton
-project status url = http://test.updater.cl-subdomains.com/drupal7
+project status url = http://updater.brafton.com/drupal7
