@@ -35,12 +35,12 @@ class BraftonErrorReport {
 
         $this->debug = $debug;
         $this->url = $_SERVER['REQUEST_URI'];
-        //$this->domain = $_SERVER['HTTP_HOST'];
-        $this->domain = 'mydomain.com';
+        $this->domain = $_SERVER['HTTP_HOST'];
+        //$this->domain = 'mydomain.com';
         $this->api = $api;
         $this->brand = $brand;
-        $this->e_key = 'r7e9cwclsx1pezm8q1nb8yo7';
-        $this->post_url = 'http://test.updater.cl-subdomains.com/errorlog/drupal7/error/'.$this->e_key;
+        $this->e_key = 'i2kwarez98z6zcmnkx3iyuj3';
+        $this->post_url = 'http://updater.cl-subdomains.com/errorlog/drupal7/error/'.$this->e_key;
         $this->level = 1;
         $this->section = 'error initialize';
         register_shutdown_function(array($this,  'check_for_fatal'));
