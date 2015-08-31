@@ -1,3 +1,4 @@
+#Ignore development files that are converted to .module and .install files but are .php files for easier readability
 brafton.module.php
 brafton.install.php
 BraftonUpdater.php
