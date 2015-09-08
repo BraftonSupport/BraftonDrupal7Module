@@ -40,7 +40,7 @@ class BraftonErrorReport {
         $this->api = $api;
         $this->brand = $brand;
         $this->e_key = 'i2kwarez98z6zcmnkx3iyuj3';
-        $this->post_url = 'http://updater.cl-subdomains.com/errorlog/drupal7/error/'.$this->e_key;
+        $this->post_url = 'http://updater.brafton.com/errorlog/drupal7/error/'.$this->e_key;
         $this->level = 1;
         $this->section = 'error initialize';
         register_shutdown_function(array($this,  'check_for_fatal'));
