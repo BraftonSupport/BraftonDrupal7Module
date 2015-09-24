@@ -86,7 +86,7 @@ function BraftonArticleImporter(){
                     $brafton_id_field = array(
                                         'field_name' => 'field_brafton_id',
                                         'entity_type' => 'node',
-                                        'bundle' => 'b_news',
+                                        'bundle' => $node->type,
                                         'display' => array(
                                             'default' => array(
                                                 'label' => 'hidden',
