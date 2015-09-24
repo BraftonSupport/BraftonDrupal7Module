@@ -46,7 +46,7 @@ Drupal 7 Module for Importing content from out XML feed.
   - Modified Date: Import your articles usin the _"modified date"_ from your feed
 - Enable Comments: Choose if you would like your audience to interact with your articles
 - Overwrite any changes made to existing content : check this box to update your content from the feed
-  - *Know that this will overwrite any and all changes you may have made through your CMS.  In addtion articles remain in your XML feed for only a period of 30 days*
+  - *Know that this will overwrite any and all changes you may have made through your CMS.  In addtion articles remain in your XML feed for only a period of 30 days _Will also download fresh copies of images since we are updating content.  Images are part of content_*
 - Import Content as unpublished : Check this option to import your articles as _unpublished_ allowing you to review or change them before the public is able to view them.
   - _Leaving this unchecked will cause articles to appear on your public facing blog as soon as they are imported_
 
@@ -92,7 +92,7 @@ Note that options here will apply to **_ONLY_** Videos as Articles have differen
 - Use Video CTA's : Check this option if you would like to take advantage of our Custom Call To Actions.
 - Atlantis Pause CTA Text : Text appearing at the top of the video when the pause button is pressed
 - Atlantis Pause Link : URL to send visitors to when they click the *Atlantis Pause CTA Text*
-- Pause Asset Gateway ID : Arch Id of your POP UP form **_Requires your enrollment in ARC. See your Account Manager for details_**. *Overrides Pause Link*
+- Pause Asset Gateway ID : Arch Id of your POP UP form **_Requires your enrollment in ARCH. See your Account Manager for details_**. *Overrides Pause Link*
 - Atlantis End CTA Title : The text appearing near the top of the video once it has finished playing.
 - Atlantis End CTA Subtitle : Text just below the title appearing in slightly smaller font at the end of the videos
 - Atlantis End CTA Link : URL to send visitors to when they click the *Atlantis End CTA Text or Ending CTA Button image* 
