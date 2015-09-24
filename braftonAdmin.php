@@ -115,8 +115,8 @@ function brafton_admin_form($form, &$form_state)	{
     $diff = $current_time - $cron_last;
     //if more time has passed than should have
     if($diff > $cron_time){
-        drupal_set_message(t('It appears that your importer may have failed to run when is was scheduled.  A report has been sent to your CMS to ensure Delivery of content'), 'warning');
-       // $errors = new BraftonErrorReport(variable_get('brafton_api_key'), variable_get( 'brafton_api_root' ) );
+        drupal_set_message(t('It appears that your importer may have failed to run when is was scheduled.  A report has been sent to your CMS to ensure Delivery of content.'), 'warning');
+       //$errors = new BraftonErrorReport(variable_get('brafton_api_key'), variable_get( 'brafton_api_root' ), (bool)variable_get('brafton_debug_mode') );
     }
     if(isset($_GET['b_error']) && $_GET['b_error'] == 'vital'){
         drupal_set_message(t('There was a fatal error when running the importer.  Please contact Tech support'), 'error');
