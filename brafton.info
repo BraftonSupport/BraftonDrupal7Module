@@ -1,7 +1,7 @@
 name = All in One Brafton Content Integrator
 description = "This module creates all of the functionality neccessary to fully integrate a Brafton blog into your Drupal 7 website."
 core = 7.x
-version = 7.x-3.0.4
+version = 7.x-3.0.5
 package = Brafton Content Integrator
 files[] = brafton.module
 configure = admin/config/content/brafton-settings
