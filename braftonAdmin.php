@@ -413,7 +413,6 @@ function brafton_admin_form($form, &$form_state)	{
 		'#description' => t( 'Default video pause cta text every article imports' ),
 		'#default_value' => variable_get( 'brafton_video_pause_cta_text',"" ),
 		'#size' => 20,
-		'#maxlength' => 20,
         '#prefix'   => variable_get('testingName')
 	);
     $form['b_cta']['brafton_video_pause_cta_link'] = array(
