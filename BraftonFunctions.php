@@ -62,7 +62,8 @@ function brafton_menu()	{
 		'description' => t( 'The settings for the All in One Brafton Content Integrator.' ),
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array( 'brafton_admin_form' ),
-		'access arguments' => array( 'administer content' ),
+		'access arguments' => array('access administration pages'),
+    		'type' => MENU_NORMAL_ITEM,
 	);
 	return $items;
 }
