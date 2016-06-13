@@ -41,7 +41,7 @@ function brafton_admin_form_submit($form, &$form_state){
         variable_set('brafton_e_log', '');
         //variable_set('brafton_clear_report', 0);
     }
-    
+
     //runs importer if archive is loaded
     //Handles background image for videos
     if($form_state['values']['brafton_video_end_cta_background'] != ''){
@@ -51,10 +51,10 @@ function brafton_admin_form_submit($form, &$form_state){
       // Save.
         $newfile = file_save($file);
         $name = basename('brafton.module', '.module');
-        file_usage_add($newfile, $name, $name, $newfile->fid);  
+        file_usage_add($newfile, $name, $name, $newfile->fid);
         variable_set('brafton_video_end_cta_background_url', $newfile->uri);
         variable_set('brafton_video_end_cta_background_id', $newfile->fid);
-        
+
     } else if(!$form_state['values']['brafton_video_end_cta_background']['fid']){
         variable_set('brafton_video_end_cta_background_url','');
         variable_del('brafton_video_end_cta_background_id');
@@ -67,10 +67,10 @@ function brafton_admin_form_submit($form, &$form_state){
       // Save.
         $newfile = file_save($file);
         $name = basename('brafton.module', '.module');
-        file_usage_add($newfile, $name, $name, $newfile->fid);  
+        file_usage_add($newfile, $name, $name, $newfile->fid);
         variable_set('brafton_video_end_cta_button_image_url', $newfile->uri);
         variable_set('brafton_video_end_cta_button_image_id', $newfile->fid);
-        
+
     } else if(!$form_state['values']['brafton_video_end_cta_button_image']['fid']){
         variable_set('brafton_video_end_cta_button_image_url','');
         variable_del('brafton_video_end_cta_button_image_id');
@@ -94,7 +94,7 @@ function build_type_list($list){
     return $array;
 }
 function build_type_field_list($type){
-    
+
     $names = field_info_instances('node',$type);
     $test = array();
     foreach($names as $key){
@@ -127,7 +127,7 @@ function brafton_admin_form($form, &$form_state)	{
         'group' => CSS_THEME,
         'type' => 'file',
       ));
-      
+
 	$form = array();
     $types = node_type_get_types();
     $type_list = array();
@@ -138,14 +138,14 @@ function brafton_admin_form($form, &$form_state)	{
             );
     }
 	//Gets the users as an array for the author dropdown
-	
+
 	$results = db_query( "SELECT uid, name FROM {users} WHERE status=1" );
 	$user_array = $results->fetchAllKeyed();
-    
+
     //Add option for getting dynamic author.
     //0 is also the id for anonymous author as a fall back if no author is set in the feed
     $user_array[0] = 'Get Author from Article';
-    
+
 	//Renders the admin form using the Drupal forms API.
     /*
      *************************************************************************************
@@ -177,11 +177,11 @@ function brafton_admin_form($form, &$form_state)	{
 		'#title' => t( 'API Root' ),
 		'#description' => t( 'The root domain of your Api key (i.e, api.brafton.com).' ),
 		'#options' => array(
-			'http://api.brafton.com' => 'Brafton',
-			'http://api.contentlead.com' => 'ContentLEAD',
-			'http://api.castleford.com.au' => 'Castleford',
+			'api.brafton.com' => 'Brafton',
+			'api.contentlead.com' => 'ContentLEAD',
+			'api.castleford.com.au' => 'Castleford',
 		),
-		'#default_value' => variable_get( 'brafton_api_root','http://api.brafton.com' )
+		'#default_value' => variable_get( 'brafton_api_root','api.brafton.com' )
 	);
     $form['brafton_general_options']['brafton_author'] = array(
 		'#type' => 'select',
@@ -272,7 +272,7 @@ function brafton_admin_form($form, &$form_state)	{
     $form['brafton_article_options']['brafton_existing_type'] = array(
         '#type' => 'select',
         '#title'    => 'Content Type',
-        '#options'  => build_type_list($type_list), 
+        '#options'  => build_type_list($type_list),
         '#default_value'    => variable_get('brafton_existing_type', 'b_news'),
         '#description'  => 'Import Articles under the content type of your choice.<span class="disclaimer">ADVANCED OPTION.  Only change if you know what you are doing. Defaults to our News Article Content Type</span>',
         '#ajax' => array(
@@ -369,7 +369,7 @@ function brafton_admin_form($form, &$form_state)	{
 		'#size' => 10,
 		'#maxlength' => 10,
 	);
-    
+
 	$form['brafton_video_options']['brafton_video_page'] = array(
 		'#type' => 'checkbox',
 		'#title' => t( 'Create a Video Page at "mydomain.com/video".' ),

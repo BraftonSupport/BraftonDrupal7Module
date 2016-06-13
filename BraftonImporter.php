@@ -1,6 +1,6 @@
 <?php
 function BraftonArticleImporter(){
-    $errors = new BraftonErrorReport(variable_get('brafton_api_key'), variable_get( 'brafton_api_root' ), (bool)variable_get('brafton_debug_mode') );
+    $errors = new BraftonErrorReport(variable_get('brafton_api_key'), 'http://' . variable_get( 'brafton_api_root' ), (bool)variable_get('brafton_debug_mode') );
 	//Gathers feed type, Api and Video Keys, and archive file information from the Brafton module settings page.
     $import_list = array();
 	$feed_type = variable_get( 'brafton_feed_type' );
@@ -14,19 +14,19 @@ function BraftonArticleImporter(){
 		if( $is_api || $is_archive )	{
 
 			//Loads the date and overwrite settings.
-	
+
 			$date = get_date_setting();
-	
+
 			//Loads the article objects from the feed into an array.
-	
+
 			$article_array = load_article_array( $is_archive );
 
-			//Loops through the article array 
+			//Loops through the article array
 
 			foreach( $article_array as $value )	{
-                
+
 				//Checks to see if the article already exists.  If it does not, a new node is created of type b_news.  If it does, then depending upon the overwrite settings the existing node is either loaded, or we iterate to the next article in the feed
-	
+
 				$id = $value->getId();
 				$check = check_if_article_exists( $id );
 				if( !empty( $check ) && $overwrite == 1 )	{
@@ -39,18 +39,18 @@ function BraftonArticleImporter(){
 				else	{
 					continue;
 				}
-		
+
 				//Gets an array of image information from the feed.
-		
+
 				$image = get_image_attributes( $value );
-		
+
 				//Gets the article categories as an array of valid and unique term ids.
-		          
+
 				$categories = set_article_categories( $value,'b_news' );
-		
+
 				//Instantiation of each article component as a field in the node object.
                 $node->status = $is_published == 1? 0: 1;
-                
+
                 $types = array(
                     'body'  => 'body',
                     'image' => 'field_brafton_image',
@@ -99,14 +99,14 @@ function BraftonArticleImporter(){
 				$node->field_brafton_id[ $node->language ][0]['value'] = $id;
 				//Setting the article pause cta text
 				//ensure categories don't get added twice
-				
+
 				$cats=false;
 				$oldcats;
                 if($overwrite && isset($node->{$types['tax']}[$node->language])){
 					$oldcats = $node->{$types['tax']}[$node->language];
 					$cats=true;
 				}
-				
+
 				foreach( $categories as $category )	{
 					if($cats){
 						foreach( $oldcats as $oldcat )	{
@@ -116,9 +116,9 @@ function BraftonArticleImporter(){
 						}
 					} else $node->{$types['tax']}[ $node->language ][]['tid'] = $category;
 				}
-				
+
 				//end category code
-				
+
 				node_save( $node );
                 var_dump($node);
 				taxonomy_node_insert( $node );
@@ -132,11 +132,11 @@ function BraftonArticleImporter(){
     return $import_list;
 }
 function BraftonVideoImporter(){
-    
+
     if(!isset($errors)){
-        $errors = new BraftonErrorReport(variable_get('brafton_api_key'), variable_get( 'brafton_api_root' ),(bool)variable_get('brafton_debug_mode') );
+        $errors = new BraftonErrorReport(variable_get('brafton_api_key'), 'http://' . variable_get( 'brafton_api_root' ),(bool)variable_get('brafton_debug_mode') );
     }else{
-        $errors->level = 1;   
+        $errors->level = 1;
     }
 	//Gathers feed type, Api and Video Keys, and archive file information from the Brafton module settings page.
     $import_list = array();
@@ -145,9 +145,9 @@ function BraftonVideoImporter(){
 	$is_video_secret = variable_get( 'brafton_video_secret_key' );
 	$overwrite = variable_get( 'brafton_overwrite' );
 	$is_published = variable_get( 'brafton_published' );
-    
+
 		if( $is_video_public && $is_video_secret )	{
-			$domain = variable_get( 'brafton_api_root' );
+			$domain = 'http://' . variable_get( 'brafton_api_root' );
 			switch ($domain) {
 				case 'http://api.brafton.com':
 					$baseURL = 'http://livevideo.api.brafton.com/v2/';
@@ -179,7 +179,7 @@ function BraftonVideoImporter(){
 			$sitemap=array();
 			foreach( $articleList->items as $value )	{
 				$id = $value->id;
-				$categories = $client->Categories(); 
+				$categories = $client->Categories();
 				$check = check_if_article_exists( $id,'b_video' );
 				if( !empty( $check ) && $overwrite == 1 )	{
 					$nid = key($check['node']);
@@ -200,7 +200,7 @@ function BraftonVideoImporter(){
 
 				$presplash = $thisArticle->fields['preSplash'];
 				$postsplash = $thisArticle->fields['postSplash'];
-				
+
 				$cta_option = variable_get( 'brafton_video_ctas' );
 				$pause_cta_text = variable_get( 'brafton_video_pause_cta_text' );
 				$pause_cta_link = variable_get( 'brafton_video_pause_cta_link' );
@@ -217,11 +217,11 @@ function BraftonVideoImporter(){
 				foreach($list as $listItem){
 					$output=$videoOutClient->Get($listItem->id);
 					$type = $output->type;
-					$path = $output->path; 
-					$resolution = $output->height; 
+					$path = $output->path;
+					$resolution = $output->height;
 					$source = generate_source_tag( $path, $resolution );
-					$embedCode .= $source; 
-				}		
+					$embedCode .= $source;
+				}
 				$embedCode .= '</video>';
 
 				$script = '<script type="text/javascript">';
@@ -267,7 +267,7 @@ function BraftonVideoImporter(){
                         }
                         $buttonImage .= "position: [ " . $postion . " ]";
                     }
-                    
+
 	            $script .=',';
 	            $script	.= <<<EOT
 					        pauseCallToAction: {
@@ -292,7 +292,7 @@ EOT;
 	            $script .= '}]';
 	            $script .= '});';
 	            $script .=  '</script>';
-				$embedCode .= $script;  
+				$embedCode .= $script;
 
 				//Wraps a Div around the embed code
 
@@ -343,7 +343,7 @@ EOT;
 				$nid=$node->nid;
 				$alias = drupal_get_path_alias("node/" . $nid);
 				$sitemap_url = $GLOBALS['base_url'].'/'.$alias;
-				
+
 				$sitemapaddition = array(
 					"url" => $sitemap_url,
 					"location" => $path,
@@ -352,7 +352,7 @@ EOT;
 					"description" =>$thisArticle->fields['content'],
 					"publication" =>$thisArticle->fields['lastModifiedDate'],
 				);
-				
+
 				$sitemap[]=$sitemapaddition;
                 ++$errors->level;
 			}
