@@ -1,11 +1,11 @@
-<?php 
+<?php
 /*
  * Brafton Error Class
  * rewrite for seperate function to get the erros currently logged, add new error function
  */
-//for debugging.  Displays 
+//for debugging.  Displays
 class BraftonErrorReport {
-    
+
     /*
      *$url Current url location
      */
@@ -26,9 +26,9 @@ class BraftonErrorReport {
      *$level current brafton level of severity set by passing int variable to the set_level method
      */
     public $level;
-    
+
     public $debug;
-    
+
     private $domain;
     //Construct our error reporting functions
     public function __construct($api, $brand , $debug = false){
@@ -48,6 +48,12 @@ class BraftonErrorReport {
         set_exception_handler(array($this, 'log_exception'));
         ini_set( "display_errors", 0 );
         error_reporting( E_ALL );
+
+        // Remove 'http://' from 'brafton_api_root' if present
+        if ( substr( $this->api, 0, 7 ) == 'http://' ) {
+            variable_set('brafton_api_root', substr($this->api, 7));
+        }
+
     }
     //handles the error log page
     static function errorPage(){
@@ -59,7 +65,7 @@ class BraftonErrorReport {
     }
     //Sets the current section reporting the error periodically set by the article and video loops themselves
     public function set_section($sec){
-        $this->section = $sec;   
+        $this->section = $sec;
     }
     //sets the current level of error reporting used to determine if remote sending is enabled periodically upgraded during article and video loops from 1 (critical error script stopped running) -> 5 (minor error script continued but something happened.)
     public function set_level($level){
@@ -84,7 +90,7 @@ class BraftonErrorReport {
     }
     //Known minor Errors occuring from normal operation.
     public function check_known_errors($e){
-       
+
     }
     //workhorse of the error reporting.  This function does the heavy lifting of logging the error and sending an error report
     public function log_exception( Exception $e ){
@@ -105,7 +111,7 @@ class BraftonErrorReport {
                 'client_sys_time'  => date('Y-m-d H:i:s'),
                 'error'     => get_class($e).' : '.$errorLevel.' | '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine().' brafton_level '.$this->level.' in section '.$this->section.$this->debug
             );
-            
+
             $brafton_error[] = $errorlog;
             $brafton_error = serialize($brafton_error);
             //update_option('brafton_e_log', $brafton_error);

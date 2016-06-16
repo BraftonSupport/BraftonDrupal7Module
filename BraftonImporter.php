@@ -1,6 +1,6 @@
 <?php
 function BraftonArticleImporter(){
-    $errors = new BraftonErrorReport(variable_get('brafton_api_key'), 'http://' . variable_get( 'brafton_api_root' ), (bool)variable_get('brafton_debug_mode') );
+    $errors = new BraftonErrorReport(variable_get('brafton_api_key'), variable_get( 'brafton_api_root' ), (bool)variable_get('brafton_debug_mode') );
 	//Gathers feed type, Api and Video Keys, and archive file information from the Brafton module settings page.
     $import_list = array();
 	$feed_type = variable_get( 'brafton_feed_type' );
@@ -134,7 +134,7 @@ function BraftonArticleImporter(){
 function BraftonVideoImporter(){
 
     if(!isset($errors)){
-        $errors = new BraftonErrorReport(variable_get('brafton_api_key'), 'http://' . variable_get( 'brafton_api_root' ),(bool)variable_get('brafton_debug_mode') );
+        $errors = new BraftonErrorReport(variable_get('brafton_api_key'), variable_get( 'brafton_api_root' ),(bool)variable_get('brafton_debug_mode') );
     }else{
         $errors->level = 1;
     }
