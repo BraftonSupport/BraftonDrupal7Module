@@ -50,8 +50,8 @@ class BraftonErrorReport {
         error_reporting( E_ALL );
 
         // Remove 'http://' from 'brafton_api_root' if present
-        if ( substr( $this->api, 0, 7 ) == 'http://' ) {
-            variable_set('brafton_api_root', substr($this->api, 7));
+        if ( substr( $this->brand, 0, 7 ) == 'http://' ) {
+            variable_set('brafton_api_root', substr($this->brand, 7));
         }
 
     }
