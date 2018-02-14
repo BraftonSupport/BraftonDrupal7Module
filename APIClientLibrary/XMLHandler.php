@@ -17,7 +17,7 @@ class XMLHandler {
 	 * @return XMLHandler
 	 */
 	function __construct($url){
-	 if(!preg_match('/^http:\/\//', $url)){
+	 if(!preg_match('/^https?:\/\//', $url)){
       $url = 'file://' . $url;
     }
 
